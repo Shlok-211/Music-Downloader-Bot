@@ -20,16 +20,21 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install Dependencies
+      - name: Install System Audio Tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Install Downloader Engine
         run: |
           pip install spotdl
           spotdl --download-ffmpeg
 
-      - name: Download Music as FLAC
+      - name: Run Lossless Extraction
         run: |
           spotdl download "${{ github.event.inputs.spotify_url }}" --format flac
 
-      - name: Upload to Telegram Channel
+      - name: Upload Audio Documents to Telegram Channel
         env:
           BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -37,5 +42,5 @@ jobs:
           for file in *.flac; do
             [ -e "$file" ] || continue
             curl -F chat_id="$CHAT_ID" -F document=@"$file" https://api.telegram.org/bot$BOT_TOKEN/sendDocument
-            sleep 2
+            sleep 3
           done
