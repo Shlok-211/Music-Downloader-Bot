@@ -1,0 +1,41 @@
+name: Spotify to Telegram FLAC
+
+on:
+  workflow_dispatch:
+    inputs:
+      spotify_url:
+        description: 'Paste your Spotify Playlist Link here'
+        required: true
+        type: string
+
+jobs:
+  download-and-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          pip install spotdl
+          spotdl --download-ffmpeg
+
+      - name: Download Music as FLAC
+        run: |
+          spotdl download "${{ github.event.inputs.spotify_url }}" --format flac
+
+      - name: Upload to Telegram Channel
+        env:
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          for file in *.flac; do
+            [ -e "$file" ] || continue
+            curl -F chat_id="$CHAT_ID" -F document=@"$file" https://api.telegram.org/bot$BOT_TOKEN/sendDocument
+            sleep 2
+          done
