@@ -28,7 +28,6 @@ jobs:
       - name: Install Downloader Engine
         run: |
           pip install spotdl
-          spotdl --download-ffmpeg
 
       - name: Run Lossless Extraction
         run: |
