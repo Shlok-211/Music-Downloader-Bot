@@ -25,9 +25,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ffmpeg
 
+      - name: Install Deno (Required for yt-dlp)
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v1.x
+
       - name: Install Downloader Engine
         run: |
-          pip install spotdl
+          pip install --upgrade pip
+          pip install spotdl yt-dlp
 
       - name: Run Lossless Extraction (Guest Mode)
         run: |
