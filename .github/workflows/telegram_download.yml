@@ -35,9 +35,9 @@ jobs:
           pip install --upgrade pip
           pip install spotdl yt-dlp
 
-      - name: Run Lossless Extraction (Guest Mode)
+      - name: Run Lossless Extraction (Decryption Mode)
         run: |
-          spotdl download "${{ github.event.inputs.spotify_url }}" --format flac --no-cache
+          spotdl download "${{ github.event.inputs.spotify_url }}" --format flac --no-cache --yt-dlp-args "--remote-components ejs:github"
 
       - name: Upload Audio Documents to Telegram Channel
         env:
