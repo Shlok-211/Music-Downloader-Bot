@@ -25,19 +25,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ffmpeg
 
-      - name: Install Deno (Required for yt-dlp)
-        uses: denoland/setup-deno@v2
-        with:
-          deno-version: v1.x
-
       - name: Install Downloader Engine
         run: |
           pip install --upgrade pip
           pip install spotdl yt-dlp
 
-      - name: Run Lossless Extraction (Decryption Mode)
+      - name: Run Lossless Extraction (Fallback Stream Sourcing)
         run: |
-          spotdl download "${{ github.event.inputs.spotify_url }}" --format flac --no-cache --yt-dlp-args "--remote-components ejs:github"
+          spotdl download "${{ github.event.inputs.spotify_url }}" --format flac --audio jiosaavn,soundcloud
 
       - name: Upload Audio Documents to Telegram Channel
         env:
